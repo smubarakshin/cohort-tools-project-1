@@ -28,10 +28,10 @@ app.get("/docs", (req, res) => {
 });
 
 app.get("/api/students", (req, res) => {
-  res.json(data);
+  res.json(studentData);
 });
 
 // START SERVER
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`Server listening on port: ${PORT}`);
 });
