@@ -38,7 +38,7 @@ app.get("/api/cohorts", (req, res) => {
 });
 
 app.get("/api/students", (req, res) => {
-  res.json(data);
+  res.json(studentData);
 });
 
 // START SERVER
