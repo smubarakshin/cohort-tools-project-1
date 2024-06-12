@@ -8,8 +8,8 @@ const mongoose = require("mongoose");
 const Student = require("./models/Student.model");
 const Cohort = require("./models/Cohort.model");
 
-// const studentData = require("./students.json");
-// const cohortData = require("./cohorts.json");
+const studentData = require("./students.json");
+const cohortData = require("./cohorts.json");
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
 // ...
@@ -42,12 +42,57 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
-app.get("/api/cohorts", async (req, res) => {
+// COHOTS ROUTES:
+// GET /api/cohorts - Retrieves all of the cohorts in the database collection
+app.get("/api/cohorts", (req, res) => {
   try {
-    const allCohorts = await Cohort.find();
-    res.status(200).json(allCohorts);
+    res.json(cohortData);
   } catch (error) {
-    res.status(500).json(error);
+    res.send(500).json({ message: "Problem getting all cohorts, sorry" });
+  }
+});
+
+// POST /api/cohorts - Creates a new cohort
+app.post("/api/cohorts", async (req, res) => {
+  try {
+    const newCohort = await Cohort.create(req.body);
+    res.status(201).json(newCohort);
+  } catch (error) {
+    res.status(500).json({ message: "Cohort created" });
+  }
+});
+
+// GET /api/cohorts/:cohortId - Retrieves a specific cohort by id
+app.get("/api/cohorts/:cohortId", async (req, res) => {
+  try {
+    const theCohort = await Cohort.findById(req.params.id);
+    res.status(200).json(theCohort);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: `Issue getting the Cohort - ${req.params.id}` });
+  }
+});
+
+// PUT /api/cohorts/:cohortId - Updates a specific cohort by id
+app.put("/api/cohorts/:cohortId", async (req, res) => {
+  try {
+    const updatedCohort = Cohort.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.status(200).json(updatedCohort);
+  } catch (error) {
+    res.status().json({ message: "Cohort updated" });
+  }
+});
+
+// DELETE /api/cohorts/:cohortId - Deletes a specific cohort by id
+app.delete("/api/cohorts/:cohortId", async (req, res) => {
+  try {
+    const deletedCohort = Cohort.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: `Cohort ${req.params.id} was deleted.` });
+  } catch (error) {
+    res.status(500).json({ message: "Cohort deleted" });
   }
 });
 
