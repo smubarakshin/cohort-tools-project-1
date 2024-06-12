@@ -3,6 +3,10 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const PORT = 5005;
 const cors = require("cors");
+const mongoose = require("mongoose");
+
+const Student = require("./models/Student.model");
+const Cohort = require("./models/Cohort.model")
 
 const studentData = require("./students.json");
 const cohortData = require("./cohorts.json");
@@ -25,6 +29,11 @@ app.use(morgan("dev"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+mongoose
+  .connect("mongodb://127.0.0.1:27017/cohort-tools-api")
+  .then((x) => console.log(`Connected to Database: "${x.connections[0].name}"`))
+  .catch((err) => console.error("Error connecting to MongoDB", err));
 
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
