@@ -6,10 +6,10 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const Student = require("./models/Student.model");
-const Cohort = require("./models/Cohort.model")
+const Cohort = require("./models/Cohort.model");
 
-const studentData = require("./students.json");
-const cohortData = require("./cohorts.json");
+// const studentData = require("./students.json");
+// const cohortData = require("./cohorts.json");
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
 // ...
@@ -42,8 +42,13 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
-app.get("/api/cohorts", (req, res) => {
-  res.json(cohortData);
+app.get("/api/cohorts", async (req, res) => {
+  try {
+    const allCohorts = await Cohort.find();
+    res.status(200).json(allCohorts);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 app.get("/api/students", (req, res) => {
