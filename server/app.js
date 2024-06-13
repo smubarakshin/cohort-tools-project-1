@@ -42,8 +42,10 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
+
 // COHOTS ROUTES:
 // GET /api/cohorts - Retrieves all of the cohorts in the database collection
+
 app.get("/api/cohorts", async (req, res) => {
   try {
     const allCohorts = await Cohort.find();
@@ -90,6 +92,7 @@ app.put("/api/cohorts/:cohortId", async (req, res) => {
   }
 });
 
+
 // DELETE /api/cohorts/:cohortId - Deletes a specific cohort by id
 app.delete("/api/cohorts/:cohortId", async (req, res) => {
   try {
@@ -102,8 +105,84 @@ app.delete("/api/cohorts/:cohortId", async (req, res) => {
   }
 });
 
-app.get("/api/students", (req, res) => {
-  res.json(studentData);
+//Student Routes
+//GET ALL STUDENTS
+app.get("/api/students", async (req, res) => {
+  try {
+    const allStudents = await Student.find();
+    res.status(200).json(allStudents);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+//CREATE A NEW STUDENT
+app.post("/api/students", async (req, res) => {
+  try {
+    const createStudent = await Student.create(req.body);
+    res.status(201).json(createStudent);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+
+//GET ALL STUDENTS FROM GIVEN COHORT
+app.get("/api/students/cohort/:cohortId", async (req, res) => {
+  try {
+    const { cohortId } = req.params;
+    const students = await Student.find({ cohort: cohortId });
+    res.status(200).json(students);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+
+//GET STUDENT BY ID
+app.get("/api/students/:studentId", async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const student = await Student.findById(studentId);
+    res.status(200).json(student);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error while getting single student" });
+  }
+});
+
+//UPDATE STUDENT BY ID
+app.put("/api/students/:studentId", async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const updatedStudent = await Student.findByIdAndUpdate(
+      studentId,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.json({
+      message: "Student updated successfully. -> ",
+      student: updatedStudent,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+
+//DELETE STUDENT BY ID
+app.delete("/api/students/:studentId", async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    await Student.findByIdAndDelete(studentId);
+    res.json({ message: "Student deleted successfully." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 });
 
 // START SERVER
