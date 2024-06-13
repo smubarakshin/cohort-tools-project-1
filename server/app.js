@@ -42,7 +42,6 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
-
 // COHOTS ROUTES:
 // GET /api/cohorts - Retrieves all of the cohorts in the database collection
 
@@ -92,7 +91,6 @@ app.put("/api/cohorts/:cohortId", async (req, res) => {
   }
 });
 
-
 // DELETE /api/cohorts/:cohortId - Deletes a specific cohort by id
 app.delete("/api/cohorts/:cohortId", async (req, res) => {
   try {
@@ -109,7 +107,7 @@ app.delete("/api/cohorts/:cohortId", async (req, res) => {
 //GET ALL STUDENTS
 app.get("/api/students", async (req, res) => {
   try {
-    const allStudents = await Student.find();
+    const allStudents = await Student.find().populate("cohort");
     res.status(200).json(allStudents);
   } catch (error) {
     res.status(500).json(error);
@@ -131,7 +129,7 @@ app.post("/api/students", async (req, res) => {
 app.get("/api/students/cohort/:cohortId", async (req, res) => {
   try {
     const { cohortId } = req.params;
-    const students = await Student.find({ cohort: cohortId });
+    const students = await Student.find().populate("cohort");
     res.status(200).json(students);
   } catch (error) {
     console.log(error);
@@ -143,7 +141,7 @@ app.get("/api/students/cohort/:cohortId", async (req, res) => {
 app.get("/api/students/:studentId", async (req, res) => {
   try {
     const { studentId } = req.params;
-    const student = await Student.findById(studentId);
+    const student = await Student.findById(studentId).populate("cohort");
     res.status(200).json(student);
   } catch (error) {
     console.log(error);
